@@ -1,0 +1,63 @@
+\newpage
+
+% Reset table and figure numbering
+\renewcommand{\thetable}{A\arabic{table}}
+\renewcommand{\thefigure}{A\arabic{figure}}
+
+% Reset counters
+\setcounter{table}{0}
+\setcounter{figure}{0}
+
+
+\section{Appendix}\label{appendix}
+
+
+
+
+True positive rate (TPR), also known as recall, measures the proportion of actual positives that are correctly identified by the model.
+
+\begin{equation}
+\text{TPR} = \frac{\text{TP}}{\text{TP} + \text{FN}}
+\end{equation}
+
+True negative rate (TNR), also known as specificity, measures the proportion of actual negatives that are correctly identified by the model.
+
+\begin{equation}
+\text{TNR} = \frac{\text{TN}}{\text{TN} + \text{FP}}
+\end{equation}
+
+Positive predictive value (PPV), also known as precision, measures the proportion of positive results that are true positives.
+
+\begin{equation}
+\text{PPV} = \frac{\text{TP}}{\text{TP} + \text{FP}}
+\end{equation}
+
+Negative predictive value (NPV) measures the proportion of negative results that are true negatives: 
+
+\begin{equation}
+\text{NPV} = \frac{\text{TN}}{\text{TN} + \text{FN}}
+\end{equation}
+
+False positive rate (FPR) measures the proportion of actual negatives that are incorrectly identified as positives by the model:
+
+\begin{equation}
+\text{FPR} = \frac{\text{FP}}{\text{FP} + \text{TN}}
+\end{equation}
+
+False negative rate (FNR) measures the proportion of actual positives that are incorrectly identified as negatives by the model.
+
+\begin{equation}
+    \text{FNR} = \frac{\text{FN}}{\text{FN} + \text{TP}}
+\end{equation}
+
+
+\AtBeginEnvironment{tabular}{\tiny}
+\input{../output/tables/metrics_all.tex}
+
+
+\begin{figure}[H]
+    \centering  
+    \includegraphics[width=0.75\textwidth]{variables}
+    \caption{Frequency distribution of the numeric independent variables}
+    \label{fig:variable}
+\end{figure}

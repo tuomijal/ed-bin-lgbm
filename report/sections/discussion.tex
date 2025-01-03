@@ -1,0 +1,23 @@
+\section{Discussion}\label{discussion}
+This study had three main findings. Each of them are discussed separately below.
+
+\paragraph{Forecasting is possible} First, we showed that forecasting mortality associated crowding using very simple administrative data is possible with sufficient temporal margin for action. The discriminatory power of the model reached an excellent level in terms of AUC at 11 a.m. and demonstrated fair performance from 8 a.m. to 11 a.m. In fact, the model matches or exceeds the performance of many clinicial decision support algorithms that are widely used in everyday clinical practice. For example, National early warning score (NEWS) that is widely used to predict in-hospital mortality has been documented to reach an AUC of 0.73 \cite{Eckart2019}. At the default threshold, the negative predictive value of the model was good at the expense of positive predictive value. 
+
+
+\paragraph{Sections differ from one another} The model performed better in predicting future crowding among medical and bedoccuping patients compared to surgical patients. The underlying cause remains elusive with the current dataset. We hypothesize that lower prevalence of crowding among surgical section might play a role. Additionally, medical patients include a sizeable segment of frail patients for whose ability to cope at home is compromised by relatively small disturbances. The presentation of these patients at the ED is likely more correlated with the state of primary care, which may lead to more predictable patterns.
+
+% Features
+\paragraph{Calendar variables are important}
+
+% calendar variables
+LIME and SHAP agreed on the set of most important variables although there were some differences in the specific order in which these variables were ranked (see Figure \ref{fig:importance}). Unsurprisingly, both the subgroup and calendar variables were ranked as the most important features by both algorithms.
+
+The availability of hospital beds was not included among the most important features by SHAP at all and received relatively low importance with LIME as well. This is counterintuitive but expected as we have previously received similiar results with analogous data \cite{Tuominen2024}. The low importance of this intuitively important feature might be explained by the fact that it is generated based on availability as reported by the nursing staff and might not reflect the true capacity of the wellbeing county.
+
+Out of the weather variables, snow depth was ranked as the most important one, but it is difficult to come up with a convincing causal relationship between crowding and measured snow depth. It is possible that the variable was ranked as important due to multicollinearity with month variable, which could explain why it was ranked lower than snow depth variable. The current occupancy statuses of the subsections were ranked high whereas none of the $t_{1-168}$ lags from the lookback window variables were included. This is slightly surprising because we expected there to be some level of autocorrelation between consecutive days.
+
+
+
+\subsection{Limitations}
+
+There were some limitations in this study. First, the definition of crowding does not account for different durations of the event although the implications can differ significantly between three hours and eight hours of consecutive crowding. Second, both training and testings set were relatively small which might result in understating the performance of the model but these kind of problems are inevitable if the system would be implemented in practice. Third, it is important to remember that forecasts alone do not help anyone. In order to extract their benefits, they have to be coupled with effective interventions, the most important of which is ensuring the availability of follow-up care beds as recently highlighted by \citet{Stewart2024}. Fourth, this study was limited by design to work with anonymous administrative data and avoided using personal health data to comply with current regulation. It is possible that the performance can be further improved by incorporating more nuanced information about the status of the ED.

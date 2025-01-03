@@ -1,0 +1,86 @@
+\subsection{Data sets and data splitting} 
+
+Tampere University Hospital is an academic teaching hospital located in Tampere, Finland. Tampere University Hospital serves as a secondary care provider for over 500,000 residents within the Wellbeing Service County of Pirkanmaa and is the sole facility in the region equipped to handle all severe emergencies. Additionally, it functions as a tertiary care unit for a broader area encompassing more than 900,000 residents. With approximately 90,000 annual visits, its ED ranks among the largest in the Nordic European countries. The ED features a total of 65 beds, allocated as follows: 6 beds for resuscitation, 36 for medical treatment, and 23 for surgical treatment. Additionally, there is a waiting area for walk-in patients who do not require continuous monitoring. Critical patients exhibiting significant disturbances in vital functions are treated in the resuscitation room and are given priority over others.
+
+In this study, we use a dataset collected for the purposes of our previous work by \citet{Eidsto2023} which contains all episodes of care among bedoccupying patients in our ED spanning from January 1, 2018 to February 29, 2020. We refer to \citet{Eidsto2023} for detailed description of the sample, patient characteristics and data handling protocols. For the purposes of this study, four emergency department occupancy ratio (EDOR) time series were generated based on the original dataset for i) all bedoccupying, ii) medical, iii) surgical and iv) critical patients. All the time series were generated on hourly resolution and predictions were made on the higher volume time series i-iii whereas iv was only used an explanatory variable.
+
+\paragraph{Re-training protocol and testing}
+
+The whole dataset contained 790 days of data. Initial training was done using period from January 1, 2018 to December 31, 2018 spanning 365 days after of which models were evaluated using data from January 1, 2019 to February 29, 2020 spanning a period of 426 days. The model was re-trained at the start of each day of the test set using all of the preceding data data points and tested on the subsequent fold, resulting in an expanding window cross-validation.
+
+\subsubsection{Target variables}
+
+In our previous work, we associated EDOR levels higher than 90\% with increased 10-day mortality \cite{Eidsto2023}. Here, we will consider every day during of which three or more hours exceed this threshold to be crowded. In our testing protocol we simulate passing of time during a morning shift from 8 a.m. to 1 p.m. and aim to forecast whether the rest of the day will be crowded or not. This idea is presented graphically in Figure \ref{fig:concept}. Classification results for each forecast origin are reported independently.
+
+\begin{figure}[H]
+    \centering
+        \includegraphics[width=0.5\textwidth]{edor-example}
+        \caption{Graphical representation of the concept of the early warning software. The red area shows EDOR$\ge$90 \% which we have previously associated with increased 10-day mortality \cite{Eidsto2023}. The black and red lines represent the historical hourly EDOR among bedoccupying patients during January 3, 2018. The vertical dashed line on the right shows the point when patient safety becomes compromised, after of which the occupancy continued to rise until peaking at almost 150\% at 5 p.m. If crowding could be foreseen e.g. at 8 a.m. (dashed vertical line on the left), it would enable pre-emptive measures that would optimally result in EDOR levels shown in green line, and ultimately improved patient safety.}
+        \label{fig:concept}
+\end{figure}
+
+\subsubsection{Explanatory variables}
+
+The explanatory variables are listed in Table \ref{tab:variables}. For each day, six different forecast origins were considered from 8 a.m. to 1 p.m. and the origins were used as an indicator variable. Each subgroup (critical, medical, conservative, bedoccupying) was also included as an indicator variable. Five calendar variables were included: weekday, month, holiday and after and before holiday indicators. Both EDOR and crowding history of each subgroup for the last 168 hours were included. Additionally, crowding statistics from $t-7$ and $t-14$ were included. Five daily weather variables were generated using open data provided by the Finnish Meteorological Institute \cite{FMI} including precipitation, snow depth and air temperature maximum, minimum and mean. In addition, a time series of the reported total availability of hospital beds within the wellbeing service county was included as provided by the patient logistics system Uoma\textregistered  by Unitary Healthcare Ltd.
+
+
+\subsection{Feature importance analysis}
+
+Relative importance of the used explanatory variables (features) were calculated using Shapley additive explanations (SHAP) \cite{Lundberg2017} and LIME \cite{Ribeiro2016}.
+
+Shapley importance, derived from cooperative game theory, is a method used to fairly distribute the total gains (or importance) among features based on their contributions. For a given model, the Shapley value for a feature represents its average marginal contribution across all possible subsets of features. Mathematically, for a set of features \( N \) and a feature \( i \), the Shapley value \( \phi_i \) is given by 
+\[ 
+\phi_i = \sum_{S \subseteq N \setminus \{i\}} \frac{|S|! (|N| - |S| - 1)!}{|N|!} [v(S \cup \{i\}) - v(S)], 
+\] 
+where \( S \) is a subset of features not including \( i \) and \( v(S) \) is the value (e.g., predictive accuracy) of the model trained on subset \( S \). This method ensures a fair distribution of feature importance, considering all possible combinations and interactions between features.
+
+Local Interpretable Model-agnostic Explanations (LIME) is another approach for understanding feature importance by creating locally faithful linear approximations of the model's behavior. For a given prediction, LIME generates a set of perturbed samples around the instance of interest and fits an interpretable linear model to explain the complex model's local decision boundary. Mathematically, LIME finds an explanation \( \xi \) by minimizing:
+\[
+\xi = \argmin_{g \in G} \mathcal{L}(f, g, \pi_x) + \Omega(g)
+\]
+where \( f \) is the original model, \( g \) is the explanatory model from the family of interpretable models \( G \), \( \pi_x \) is a proximity measure to define locality around instance \( x \), \( \mathcal{L} \) is a loss function measuring how well \( g \) approximates \( f \) in the locality of \( x \), and \( \Omega(g) \) is a measure of complexity of the explanation. This approach provides intuitive, locally accurate explanations while remaining model-agnostic.
+
+
+
+
+\subsection{Performance metrics}
+
+The performance of the model is evaluated using an exhaustive set of binary performance metrics. Some of them are shortly defined below and the rest of them a provided in Appendix \ref{appendix}.
+
+The F1 score is the harmonic mean of precision and recall. It provides a balance between the precision and the recall, making it useful for situations where both false positives and false negatives are important.
+
+\begin{equation}
+F1 = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}
+\end{equation}
+
+Accuracy measures the overall correctness of the model by calculating the proportion of true results (both true positives and true negatives) among the total number of cases examined.
+
+\begin{equation}
+\text{Accuracy} = \frac{\text{TP} + \text{TN}}{\text{TP} + \text{TN} + \text{FP} + \text{FN}}
+\end{equation}
+
+Area under the receiver operating characteristics curve (AUROC) provides a single metric to evaluate the performance of a binary classifier. It represents the probability that a randomly chosen positive instance is ranked higher than a randomly chosen negative instance.
+
+\begin{equation}
+\text{AUROC} = \int_0^1 \text{TPR}(\text{FPR}^{-1}(x)) \, dx
+\end{equation}
+
+Area under the precision-recall curve (AUPRC) measures the trade-off between precision and recall for different threshold values, offering a summary of the model’s performance when dealing with imbalanced datasets.
+
+\begin{equation}
+\text{AUPRC} = \int_0^1 \text{Precision}(\text{Recall}^{-1}(x)) \, dx
+\end{equation}
+
+\paragraph{Statistical significance}
+
+95\% confidence intervals of the AUROC values were calculated using bootstrapping. Bootstrapping involves drawing a large number \( B \) of bootstrap samples \( X^* = \{x_1^*, x_2^*, \ldots, x_n^*\} \) by sampling with replacement from an original sample \( X = \{x_1, x_2, \ldots, x_n\} \) of size \( n \). For each bootstrap sample \( X^* \), the statistic of interest, \( \theta^* = \theta(X^*) \), is computed. The bootstrap distribution of \( \theta^* \) approximates the sampling distribution of the statistic \( \theta \), allowing for the estimation of parameters such as the mean, variance, and confidence intervals of \( \theta \). In this study n=200.
+
+To obtain 95\% confidence intervals for F1 scores, we used the algorithm proposed by \citet{Takahashi2022} using a software implementation of \citet{Gildenblat2023}.
+
+\subsection{Model}
+
+LightGBM (Light Gradient Boosting Machine) is a machine learning framework for gradient boosting developed \citet{Ke2017}. It is designed to be highly efficient and scalable, particularly for handling large datasets and high-dimensional data. In classification tasks, it has been shown to outperform other gradient boosting methods such as XGBoost and CatBoost \cite{Florek2023} while being the most efficient and fastest to train. In addition, LightGBM is the state-of-the art model in time series forecasting \cite{Makridakis2022} and we have previously demonstrated it's excellent performance with ED data as well \cite{Tuominen2023}. LightGBM was selected as the predictive algorithm based on this excellent performance in past benchmarks and because it performed well against other gradient boosting frameworks in our initial tests the results of which are included in the Appendix \ref{appendix}.
+
+LightGBM uses a histogram-based learning method that buckets continuous feature values into discrete bins, reducing computational cost and memory usage. It grows trees leaf-wise, splitting the leaf with the highest loss reduction, which allows for deeper and more accurate trees compared to traditional level-wise growth. To handle high-dimensional data, LightGBM employs Exclusive Feature Bundling (EFB), which bundles mutually exclusive features to reduce the number of effective features. This results in faster training without sacrificing accuracy. Additionally, Gradient-based One-Side Sampling (GOSS) focuses on instances with large gradient values, enhancing both training speed and model accuracy by prioritizing harder-to-fit instances. It also directly handles categorical features using a specialized algorithm for decision splitting, avoiding the need for one-hot encoding. This improves efficiency and simplifies the preprocessing pipeline.
+
+\input{../output/tables/variables.tex}

@@ -1,0 +1,120 @@
+\subsection{Descriptive statistics}
+
+Out of the 791 days in the sample, 218 (28 \%) days were crowded among the bedocuppying patients, 288 (36 \%) in the medical section and 199 (25 \%) in the surgical section. Temporal distribution of these days is provided in Figure \ref{fig:calmap}. The hourly pattern of crowding incidence is provided in Figures \ref{fig:bars} and an example on their distribution over several weeks in Figure \ref{fig:heatmap}. Between 8 a.m. and 11 a.m. crowding was nonexistent or extremely rare 0-1 \% of hours being crowded. Crowding starts to increase with prevalence of 2\%, 6\% and 2\% among bedoccupying, medical and surgical sections. After this the prevalence increases following a normal distribution and peaks at 4 p.m. among bedoccupying patients (28\%), 3 p.m. among medical patients (38\%) and 5 p.m. among surgical patients (22\%) before becoming increasingly rare towards the end of the day.
+
+% CALMAPS
+\begin{figure}[p]
+    \centering
+        \begin{subfigure}[b]{1\textwidth}
+            \includegraphics[width=\textwidth]{calmap-bed}
+            \caption{Bedoccupying}
+        \end{subfigure}
+        \begin{subfigure}[b]{1\textwidth}
+            \includegraphics[width=\textwidth]{calmap-med}
+            \caption{Medical}
+        \end{subfigure}
+        \begin{subfigure}[b]{1\textwidth}
+            \includegraphics[width=\textwidth]{calmap-sur}
+            \caption{Surgical}
+        \end{subfigure}
+        \caption{Temporal distribution of crowded days among bedoccupying, medical and surgical patients in the sample. The two months of year 2020 are ommitted here for brevity. The figure demonstrates sporadic occurence of the crowding events that do not follow a deterministic weekday pattern, excluding the relative rarity of crowding during the weekends.}
+        \label{fig:calmap}
+\end{figure}
+
+
+
+
+% BARS
+\begin{figure}[H]
+    \centering  
+    \includegraphics[width=1.0\textwidth]{bars}
+    \caption{Distribution of crowding events over different hours of the day among bedoccupying, medical and surgical patterns. Note That crowding is nonexistent between 8 a.m. to 11 a.m.}
+    \label{fig:bars}
+\end{figure}
+
+% HEATMAPS
+\begin{figure}[H]
+    \centering
+        \begin{subfigure}[b]{0.30\textwidth}
+            \includegraphics[width=\textwidth]{heatmap-bed}
+            \caption{Bedoccupying}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.30\textwidth}
+            \includegraphics[width=\textwidth]{heatmap-med}
+            \caption{Medical}
+        \end{subfigure}
+        \begin{subfigure}[b]{0.30\textwidth}
+            \includegraphics[width=\textwidth]{heatmap-sur}
+            \caption{Surgical}
+        \end{subfigure}
+        \caption{Distribution of the crowding events during January 2018 as a function of hour of the day. Note the varying time of onset and duration of crowding as well as the relative rarity of crowding during the weekends.}
+        \label{fig:heatmap}
+\end{figure}
+
+
+
+\subsection{Model performance}
+
+Performance metrics of the model among different sections and forecast origins are provided in Table \ref{tab:metrics}. Additionally, AUROC and PRAUC figures at 11 a.m. are provided in Figure \ref{fig:auroc_and_auprc}. Calendar map of the model performance at 11 a.m. among different days on the test set is provided in Figure \ref{fig:errormap}. At 8 a.m. the respective AUC values among bedoccupying, medical and surgical patients were 0.79 (95\% CI 0.75-0.83), 0.77 (95\% CI 0.73-0.80) and 0.74 (95\% CI 0.69-0.78) respectively. The discriminatory ability increased throughout the day so that at 11 a.m. the model reached an AUC of 0.82 (95\% CI 0.78-0.85) among both bedoccupying, 0.80 (95\% CI 0.76-0.84) among medical patients, and 0.73 (95\% CI 0.68-0.77) among surgical patients. At 1 p.m. the respective AUC values were 0.87 (95\% CI 0.84-0.90), 0.86 (95\% 0.83-0.89) and 0.78 (95\% 0.74-0.83) for bedoccupying, medical and surgical patients respectively.
+
+% AUC
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.35\textwidth}
+        \includegraphics[width=\textwidth]{auc}
+        \caption{AUROC}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.57\textwidth}
+        \includegraphics[width=\textwidth]{prcurve}
+        \caption{AUPRC}
+    \end{subfigure}
+    \caption{Area under the receiver operating characteristics curve (AUROC) and area under the precision-recall curve (AUPRC) at forecast origin 11 a.m. Guess level is provided in AUPRC plot for reference. 95\% confidence intervals in parenthesis.}
+    \label{fig:auroc_and_auprc}
+\end{figure}
+
+
+\begin{sidewaystable}
+\input{../output/tables/metrics.tex}
+\end{sidewaystable}
+
+
+% Errormaps
+\begin{figure}[H]
+    \centering
+        \begin{subfigure}[b]{1.0\textwidth}
+            \includegraphics[width=\textwidth]{errormap-bed-lgbm-11-0-0}
+            \caption{Bedoccupying}
+        \end{subfigure}
+        \begin{subfigure}[b]{1.0\textwidth}
+            \includegraphics[width=\textwidth]{errormap-med-lgbm-11-0-0}
+            \caption{Medical}
+        \end{subfigure}
+        \begin{subfigure}[b]{1.0\textwidth}
+            \includegraphics[width=\textwidth]{errormap-sur-lgbm-11-0-0}
+            \caption{Surgical}
+        \end{subfigure}
+        \caption{Performance at origin 11. Dark green: true positive, Dark red: false positive, Light green: true negative, Light red: false negative}
+        \label{fig:errormap}
+\end{figure}
+
+
+% \paragraph{Feature importance} 
+
+% Feature importance statistics are provided in Figure \ref{fig:importance}. Weekday was the most important feature, followed by subgroup and current EDOR of the medical section. Holiday was the fourth most important feature.
+
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{1.0\textwidth}
+        \includegraphics[width=\textwidth]{shap}
+        \caption{Feature importance statistics as estimated using mean absolute Shapley values}
+        \label{fig:shap}
+    \end{subfigure}
+    \begin{subfigure}[b]{1.0\textwidth}
+        \includegraphics[width=\textwidth]{lime}
+        \caption{Feature importance statistics as estimated using LIME}
+        \label{fig:lime}
+    \end{subfigure}
+    \caption{Feature importance statistics}
+    \label{fig:importance}
+\end{figure}
