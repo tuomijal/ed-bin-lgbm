@@ -12,7 +12,6 @@ data/model/
 data/extra/
 data/preprocessed/
 data/processed/
-data/raw/
 *.aux
 *.bbl
 *.blg
