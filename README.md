@@ -2,6 +2,8 @@
 
 This repository contains code, data and raw text for the following article:
 
+https://doi.org/10.1007/s10916-024-02137-0
+
 Authors:
 
 **Jalmari Nevanlinna (1), Anna Eidstø (1,2), Jari Ylä-Mattila (1,2), Teemu Koivistoinen (4), Niku Oksala (1,3), Juho Kanniainen (5), Ari Palomäki (1,4) and Antti Roine (1)**
